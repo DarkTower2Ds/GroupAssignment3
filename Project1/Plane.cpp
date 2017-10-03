@@ -66,7 +66,35 @@ void Plane::clearASeat()
 */
 void Plane::emptyPlane()
 {
+	Seat **rowIterator = firstClass;
+	for (int i = 0; i < firstClassRow; i++)
+	{
+		Seat *colIterator = *rowIterator;
+		for (int j = 0; j < firstClassCol; j++)
+		{
+			colIterator->booking = '-';
+			colIterator->isEmpty = true;
 
+			colIterator++;
+		}
+
+		rowIterator++;
+	}
+
+	rowIterator = economy;
+	for (int i = 0; i < economyRow; i++)
+	{
+		Seat *colIterator = *rowIterator;
+		for (int j = 0; j < economyCol; j++)
+		{
+			colIterator->booking = '-';
+			colIterator->isEmpty = true;
+
+			colIterator++;
+		}
+
+		rowIterator++;
+	}
 }
 
 /*
@@ -75,5 +103,6 @@ void Plane::emptyPlane()
 */
 Plane::~Plane()
 {
-
+	delete [] firstClass;
+	delete [] economy;
 }
