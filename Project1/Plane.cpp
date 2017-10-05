@@ -6,11 +6,27 @@ using namespace std;
 	Default Constructor
 	"Prompts the user to input the number of rows and columns of Seats
 	 for first class and economy class,
-	 then class the overload constructor with those values."
+	 then make a call to the overload constructor with those values."
 */
 Plane::Plane()
 {
-
+    int newFirstClassRow, newFirstClassCol;
+    int newEconRow, newEconCol;
+    cout<<"How many rows for First Class?"<<endl;
+    cin>>newFirstClassRow;
+    cout<<endl;
+    cout<<"How many columns for First Class?"<<endl;
+    cin>>newFirstClassCol;
+    cout<<endl;
+    
+    cout<<"How many rows for Economy?"<<endl;
+    cin>>newEconRow;
+    cout<<endl;
+    cout<<"How many columns for Economy?"<<endl;
+    cin>>newEconCol;
+    cout<<endl;
+    
+    Plane(newFirstClassRow, newFirstClassCol,newEconRow, newEconCol);
 }
 
 /*
@@ -18,10 +34,15 @@ Plane::Plane()
 	"Store all of the row and column data into the private variables.
 	 Initialize the 2D arrays firstClass and Economy."
 */
-Plane::Plane(int flRow, int flCol, int eRow, int eCol)
-{
-
+Plane::Plane(int newFirstClassRow,int newFirstClassCol, int newEconRow,int newEconCol){
+    firstClassRow = newFirstClassRow;
+    firstClassCol = newFirstClassCol;
+    econRow = newEconRow;
+    econCol = newEconCol;
+    Seat firstClass[firstClassRow][firstClassCol];
+    Seat economy[econRow][econCol];
 }
+
 
 /*
 	"Show all the seats in correct order (both first class and economy class)"
@@ -36,10 +57,46 @@ void Plane::showAllSeat()
 	 Ask for the Row and Column they want.
 	 If the seat was not booked, book it. Otherwise, inform the user is booked."
 */
-void Plane::bookASeat()
-{
-
+void Plane::bookASeat(){
+    int choice, row, column;
+    cout<<"First Class(1) or Economy(2)?";
+    cin>>choice;
+    
+    if(choice == 1){
+        cout<<"You're now booking a First Class seat"<<endl;
+        cout<<"Row: ";
+        cin>>row;
+        cout<<"Column: ";
+        cin>>column;
+        cout<<endl;
+        
+        if((firstClass[row][column].isEmpty == true) || (firstClass[row][column].booking = '-')){
+            cout<<"Thank you, your booked seat is at Row: "<<row<<" Column: "<<column<<endl;
+            firstClass[row][column].booking = 'x';
+        }
+        else{
+            cout<<"Sorry, this seat is already booked.";
+        }
+    }
+    
+    else if(choice == 2){
+        cout<<"You're now booking an Economy seat"<<endl;
+        cout<<"Row: ";
+        cin>>row;
+        cout<<"Column: ";
+        cin>>column;
+        cout<<endl;
+        
+        if((economy[row][column].isEmpty == true) || (economy[row][column].booking = '-')){
+            cout<<"Thank you, your booked seat is at Row: "<<row<<" Column: "<<column<<endl;
+            economy[row][column].booking = 'x';
+        }
+        else{
+            cout<<"Sorry, this seat is already booked.";
+        }
+    }
 }
+
 
 /*
 	"Ask if the user wants [to check] first class or economy class.
