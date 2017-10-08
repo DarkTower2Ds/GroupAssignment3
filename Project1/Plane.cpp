@@ -1,6 +1,4 @@
-#include <iostream>
 #include "Plane.h"
-using namespace std;
 
 /*
 	Default Constructor
@@ -28,7 +26,63 @@ Plane::Plane(int flRow, int flCol, int eRow, int eCol)
 */
 void Plane::showAllSeat()
 {
+	/* THIS IS THE BORING ONE THAT SHOULD 100% WORK
+	Seat **rowIterator = firstClass;
+	Seat *colIterator = *rowIterator;
 
+	cout << "First Class\n----------" << endl;
+	for (int i = 0; i < firstClassRow; i++)
+	{
+		colIterator = *rowIterator;
+		for (int j = 0; j < firstClassCol; j++)
+		{
+			cout << colIterator->booking << " ";
+
+			colIterator++;
+		}
+		cout << endl;
+
+		rowIterator++;
+	}
+
+	rowIterator = economy;
+
+	cout << "Economy Class\n-------------" << endl;
+	for (int i = 0; i < economyRow; i++)
+	{
+		colIterator = *rowIterator;
+		for (int j = 0; j < economyCol; j++)
+		{
+			cout << colIterator->booking << " ";
+
+			colIterator++;
+		}
+		cout << endl;
+
+		rowIterator++;
+	}
+	*/
+	//THIS IS THE FUN ONE:
+	//Find which class has more columns of Seats and set numOfCols to the greater value
+	int numOfCols = 0;
+	if (economyCol > firstClassCol)
+		numOfCols = economyCol + 2;
+	else
+		numOfCols = firstClassCol + 2;
+	if (numOfCols < 13)
+		numOfCols = 15;
+	//Determine whether the number of columns is odd and call the appropriate function
+	if (numOfCols % 2 == 1)
+		printOddNose(numOfCols);
+	else
+		printEvenNose(numOfCols);
+
+	//Determine where the wings will be placed and set wingPlacement to that value
+	int wingPlacement = 0;
+	wingPlacement = findWingPlacement();
+
+	//Print the fuselage
+	printFuselage(wingPlacement, numOfCols);
 }
 
 /*
@@ -67,9 +121,10 @@ void Plane::clearASeat()
 void Plane::emptyPlane()
 {
 	Seat **rowIterator = firstClass;
+	Seat *colIterator = *rowIterator;
 	for (int i = 0; i < firstClassRow; i++)
 	{
-		Seat *colIterator = *rowIterator;
+		colIterator = *rowIterator;
 		for (int j = 0; j < firstClassCol; j++)
 		{
 			colIterator->booking = '-';
@@ -84,7 +139,7 @@ void Plane::emptyPlane()
 	rowIterator = economy;
 	for (int i = 0; i < economyRow; i++)
 	{
-		Seat *colIterator = *rowIterator;
+		colIterator = *rowIterator;
 		for (int j = 0; j < economyCol; j++)
 		{
 			colIterator->booking = '-';
@@ -105,4 +160,171 @@ Plane::~Plane()
 {
 	delete [] firstClass;
 	delete [] economy;
+}
+
+
+
+
+
+
+/*
+	HERE BEGINS THE FUN
+*/
+void Plane::printEvenNose(int numOfCols)
+{
+	int numOfRows = 0;
+	numOfRows = numOfCols / 2;
+
+	for (int i = 0; i < numOfRows; i++)
+	{
+		cout << "     "; //to leave space for the wings
+		bool printedLeft = false;
+		int leftIndex = numOfRows - i - 1;
+		int distanceBetween = i * 2;
+
+		for (int j = 0; j < numOfCols; j++)
+		{
+			if (printedLeft && (j / leftIndex == distanceBetween))
+			{
+				cout << "\\";
+			}
+			else if (!printedLeft && (j == leftIndex))
+			{
+				cout << "/";
+			}
+			else
+			{
+				cout << " ";
+			}
+		}
+
+		cout << endl;
+	}
+}
+
+void Plane::printOddNose(int numOfCols)
+{
+	int numOfRows = 0;
+	numOfRows = numOfCols / 2 + 1;
+
+	for (int i = 0; i < numOfRows; i++)
+	{
+		cout << "     "; //to leave space for the wings
+
+		bool printedLeft = false;
+		int leftIndex = numOfRows - i - 1;
+		int distanceBetween = 2 * (i - 1) + 1;
+
+		for (int j = 0; j < numOfCols; j++)
+		{
+			if ((i == 0) && (j == (numOfCols / 2)))
+			{
+				cout << "^";
+			}
+			else if ((i != 0) && printedLeft && (j / leftIndex == distanceBetween))
+			{
+				cout << "\\";
+			}
+			else if ((i != 0) && !printedLeft && (j == leftIndex))
+			{
+				cout << "/";
+			}
+			else
+			{
+				cout << " ";
+			}
+
+			cout << endl;
+		}
+	}
+}
+
+int Plane::findWingPlacement()
+{
+	return (firstClassRow + economyRow) / 2;
+}
+
+void Plane::printFuselage(int wingPlacement, int numOfCols)
+{
+	Seat **rowIterator = firstClass;
+	Seat *colIterator = *rowIterator;
+	int wingCounter = 0;
+
+	cout << "     | First Class";
+	for (int i = 0; i < numOfCols - 11; i++)
+		cout << " ";
+	cout << " |";
+
+	for (int i = 0; i < firstClassRow; i++)
+	{
+		if (wingCounter == wingPlacement)
+		{
+			cout << "-----| ";
+		}
+		else
+		{
+			cout << "     | ";
+		}
+
+		colIterator = *rowIterator;
+		for (int j = 0; j < firstClassCol; j++)
+		{
+			cout << colIterator->booking << " ";
+
+			colIterator++;
+		}
+		cout << endl;
+
+		rowIterator++;
+
+		if (wingCounter == wingPlacement)
+		{
+			cout << " |-----";
+		}
+		else
+		{
+			cout << " |-----";
+		}
+		wingCounter++;
+	}
+
+	rowIterator = economy;
+
+	cout << "     | EconomyClass";
+	for (int i = 0; i < numOfCols - 11; i++)
+		cout << " ";
+	cout << " |";
+
+	for (int i = 0; i < economyRow; i++)
+	{
+		if (wingCounter == wingPlacement)
+		{
+			cout << "-----| ";
+		}
+		else
+		{
+			cout << "     | ";
+		}
+
+		colIterator = *rowIterator;
+		for (int j = 0; j < economyCol; j++)
+		{
+			cout << colIterator->booking << " ";
+
+			colIterator++;
+		}
+		cout << endl;
+
+		rowIterator++;
+
+		if (wingCounter == wingPlacement)
+		{
+			cout << " |-----";
+		}
+		else
+		{
+			cout << " |-----";
+		}
+		wingCounter++;
+	}
 }
