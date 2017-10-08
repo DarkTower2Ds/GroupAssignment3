@@ -4,15 +4,21 @@
 #include "Seat.h"
 using namespace std;
 
+struct Seat
+{
+    char status;    // '-' if the seat is empty,'X' if the seat is booked
+    bool isBooked;    //True if the seat is empty, false if available
+};
+
 class Plane
 {
 private:
 	Seat **firstClass;	//Dynamic 2D Array of the Seats in first class
 	Seat **economy;		//Dynamic 2D Array of the Seats in economy class
-	int firstClassRow;	//Number of Rows of Seats in first class
-	int firstClassCol;	//Number of Columns of Seats in first class
-	int economyRow;		//Number of Rows of Seats in economy class
-	int economyCol;		//Number of Columns of Seats in economy class
+	int firstClassRows;	//Number of Rows of Seats in first class
+	int firstClassCols;	//Number of Columns of Seats in first class
+	int economyRows;		//Number of Rows of Seats in economy class
+	int economyCols;		//Number of Columns of Seats in economy class
 
 public:
 	Plane();											//Default constructor
