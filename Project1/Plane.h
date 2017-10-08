@@ -1,7 +1,6 @@
 #ifndef PLANE_H
 #define PLANE_H
 #include <iostream>
-#include "Seat.h"
 using namespace std;
 
 struct Seat
@@ -23,6 +22,13 @@ private:
 public:
 	Plane();											//Default constructor
 	Plane(int fcRow, int fcCol, int eRow, int eCol);	//Overloaded constructor w/ #s of rows and columns in each class
+	int getFirstClassRows();
+	int getFirstClassCols();
+	/* My little rant about these is in Plane.cpp - Alex
+	int getEconomyRows();
+	int getEconomyCols();
+	void setFirstClass(int rows, int cols);
+	*/
 	void showAllSeat();									//Print the Seats on the plane
 	void bookASeat();									//Book a Seat on the plane
 	void checkASeat();									//Check if a Seat is booked on the plnae
