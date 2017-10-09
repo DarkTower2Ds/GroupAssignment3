@@ -30,8 +30,34 @@ Plane::Plane()
     economyRows = newEconRow;
     economyCols = newEconCol;
     
-    firstClass[firstClassRows][firstClassCols]; //FOR THE RECORD I THINK THIS IS CURRENTLY INCORRECT AND I WILL CHANGE IT IF IT DOESN'T WORK. THIS IS NOT THE PROPER WAY TO DECLARE DYNAMIC 2D ARRAYS - Alex
-    economy[economyRows][economyCols];
+	/*
+		I had to rewrite the last few lines of this in order to properly initialize the 2D dynamic arrays.
+		Originally, they were not created properly at all, resulting in segmentation faults
+		when functions tried to do anything with them.
+		Here, I have followed a similar style to the original code, yet updated it so that it actually
+		initializes the 2D dynamic arrays.
+											-Alex
+	*/
+    firstClass = new Seat*[firstClassRows];
+	for (int i = 0; i < firstClassRows; i++)
+	{
+		firstClass[i] = new Seat[firstClassCols];
+		for (int j = 0; j < firstClassCols; j++)
+		{
+			firstClass[i][j].isBooked = false;
+			firstClass[i][j].status = '-';
+		}
+	}
+    economy = new Seat*[economyRows];
+	for (int i = 0; i < economyRows; i++)
+	{
+		economy[i] = new Seat[economyCols];
+		for (int j = 0; j < economyCols; j++)
+		{
+			economy[i][j].isBooked = false;
+			economy[i][j].status = '-';
+		}
+	}
 }
 
 /*
@@ -93,19 +119,20 @@ void Plane::bookASeat() {
 		cin >> column;
 		cout << endl;
 
-		if ((firstClass[row][column].isBooked == false) || (firstClass[row][column].status = '-')) //Same problem as below in the economy part of this function - Alex
-		{
-			cout << "Thank you, your booked seat is at Row: " << row << " Column: " << column << endl;
-			firstClass[row][column].status = 'X';
-		}
-		else if (firstClass[row][column].isBooked == true) //And here - Alex
-		{
-			cout << "Sorry, this seat is already booked." << endl;
-		}
-		else if ((column > firstClassCols) || (row > firstClassRows)) //This statement was present for economy but not for first class, and I don't know why, because it's equally important to check that the user input for first class is valid, too. - Alex
+		if ((column > firstClassCols) || (row > firstClassRows)) //This statement was present for economy but not for first class, and I don't know why, because it's equally important to check that the user input for first class is valid, too. - Alex
 		{
 			cout << "Sorry, your input is invalid. Please choose again." << endl;
 			bookASeat();
+		}
+		else if (firstClass[row][column].isBooked) //And here - Alex
+		{
+			cout << "Sorry, this seat is already booked." << endl;
+		}
+		else if ((!firstClass[row][column].isBooked)) //Same problem as below in the economy part of this function - Alex
+		{
+			cout << "Thank you, your booked seat is at Row: " << row << " Column: " << column << endl;
+			firstClass[row][column].status = 'X';
+			firstClass[row][column].isBooked = true; //This statement was forgotten, so I added it. - Alex
 		}
 	}
 
@@ -117,20 +144,22 @@ void Plane::bookASeat() {
 		cin >> column;
 		cout << endl;
 
-		if ((economy[row][column].isBooked == false) || (economy[row][column].status = '-')) //everything past the || is unnecessary. It's called a "short circuit" error - Alex
+		if ((column > economyCols) || (row > economyRows)) //I moved this statement to be first. - Alex
 		{
-			cout << "Thank you, your booked seat is at Row: " << row << " Column: " << column << endl;
-			economy[row][column].status = 'X';
+			cout << "Sorry, your input is invalid. Please choose again." << endl;
+			bookASeat();
 		}
-		else if ((economy[row][column].isBooked == true)) //I added this other if statement here because you can't have two else's like that without another if statment of some kind. - Alex
+		else if ((economy[row][column].isBooked)) //I added this other if statement here because you can't have two else's like that without another if statment of some kind. - Alex		I also moved this if statement to be second. - Alex
 		{
 			cout << "Sorry, this seat is already booked.";
 		}
-		else if ((column > economyCols) || (row > economyRows))
+		else if ((!economy[row][column].isBooked)) //everything past the || is unnecessary. It's called a "short circuit" error - Alex			I actually had to REMOVE the || and everything after it here, and in all instances, because it was changing the status of the seat. - Alex
 		{
-		cout << "Sorry, your input is invalid. Please choose again." << endl;
-		bookASeat();
+			cout << "Thank you, your booked seat is at Row: " << row << " Column: " << column << endl;
+			economy[row][column].status = 'X';
+			economy[row][column].isBooked = true; //This statement was forgotten, so I added it. - Alex
 		}
+
 	}
 }
 
@@ -155,19 +184,20 @@ void Plane::checkASeat()
 		cin >> column;
 		cout << endl;
 
-		if ((firstClass[row][column].isBooked == false) || (firstClass[row][column].status = '-')) //Same stuff as in the previous function - Alex
+		if ((column > firstClassCols) || (row > firstClassRows)) //Rearranged order of if statements. - Alex
 		{
-			cout << "The seat is available for booking!";
+			cout << "Sorry, your input is invalid. Please choose again." << endl;
+			checkASeat();
 		}
-		else if(firstClass[row][column].isBooked == true)
+		else if (firstClass[row][column].isBooked)
 		{
 			cout << "Sorry, this seat is already booked." << endl;
 		}
-		else if ((column > firstClassCols) || (row > firstClassRows))
+		else if ((!firstClass[row][column].isBooked)) //Same stuff as in the previous function - Alex
 		{
-			cout << "Sorry, your input is invalid. Please choose again." << endl;
-			bookASeat();
+			cout << "The seat is available for booking!" << endl;
 		}
+
 	}
 
 	else if (choice == 2)
@@ -179,37 +209,40 @@ void Plane::checkASeat()
 		cin >> column;
 		cout << endl;
 
-		if ((economy[row][column].isBooked == false) || (economy[row][column].status = '-')) //This is the same problem as in  the bookASeat function. - Alex
+		if ((column > economyCols) || (row > economyRows))  //And here - Alex			Moved this statement to be first, added the if part of it. - Alex
 		{
-			cout << "The seat is available for booking!";
+			cout << "Sorry, your input is invalid. Please choose again." << endl;
+			checkASeat();
 		}
-		else if ((economy[row][column].isBooked == true)) //And here - Alex
+		else if ((economy[row][column].isBooked)) //And here - Alex
 		{
 			cout << "Sorry, this seat is already booked." << endl;
 		}
-		else //And here - Alex
+		else if ((!economy[row][column].isBooked)) //This is the same problem as in  the bookASeat function. - Alex
 		{
-		cout << "Sorry, your input is invalid. Please choose again." << endl;
-		checkASeat();
+			cout << "The seat is available for booking!" << endl;
 		}
+
+
 	}
 }
+
 /*
 	"Show all the seats in correct order (both first class and economy class)"
 */
 void Plane::showAllSeat()
 {
-	/* THIS IS THE BORING ONE THAT SHOULD 100% WORK
+	//THIS IS THE BORING ONE THAT SHOULD 100% WORK
 	Seat **rowIterator = firstClass;
 	Seat *colIterator = *rowIterator;
 
-	cout << "First Class\n----------" << endl;
-	for (int i = 0; i < firstClassRow; i++)
+	cout << "First Class\n-----------" << endl;
+	for (int i = 0; i < firstClassRows; i++)
 	{
 		colIterator = *rowIterator;
-		for (int j = 0; j < firstClassCol; j++)
+		for (int j = 0; j < firstClassCols; j++)
 		{
-			cout << colIterator->booking << " ";
+			cout << colIterator->status << " ";
 
 			colIterator++;
 		}
@@ -221,12 +254,12 @@ void Plane::showAllSeat()
 	rowIterator = economy;
 
 	cout << "Economy Class\n-------------" << endl;
-	for (int i = 0; i < economyRow; i++)
+	for (int i = 0; i < economyRows; i++)
 	{
 		colIterator = *rowIterator;
-		for (int j = 0; j < economyCol; j++)
+		for (int j = 0; j < economyCols; j++)
 		{
-			cout << colIterator->booking << " ";
+			cout << colIterator->status << " ";
 
 			colIterator++;
 		}
@@ -234,7 +267,8 @@ void Plane::showAllSeat()
 
 		rowIterator++;
 	}
-	*/
+
+	/*
 	//THIS IS THE FUN ONE:
 	//Find which class has more columns of Seats and set numOfCols to the greater value
 	int numOfCols = 0;
@@ -256,18 +290,8 @@ void Plane::showAllSeat()
 
 	//Print the fuselage
 	printFuselage(wingPlacement, numOfCols);
+	*/
 }
-
-/*
-	"Ask if the user wants first class or economy class.
-	 Ask for the Row and Column they want.
-	 If the seat was not booked, book it. Otherwise, inform the user is booked."
-*/
-void Plane::bookASeat()
-{
-
-}
-
 
 void Plane::clearASeat()
 {
@@ -288,34 +312,57 @@ void Plane::clearASeat()
         cin>>column;
         cout<<endl;
         
-        if((firstClass[row][column].isBooked == true) || (firstClass[row][column].status = 'X')){
+		if ((column > firstClassCols) || (row > firstClassRows)) //This important check was not present, so I added it. - Alex
+		{
+			cout << "Sorry, your input is invalid. Please choose again." << endl;
+			clearASeat();
+		}
+		else if (!firstClass[row][column].isBooked) //See previous comment. The same applies here. - Alex
+		{
+			cout << "This seat is already empty." << endl;
+		}
+        else if((firstClass[row][column].isBooked) || (firstClass[row][column].status = 'X')) //Everything past the || is redundant. - Alex			Also, a boolean value does not need to be checked with an == true or == false. I removed this and all instances of this error elsewhere. - Alex
+		{
             firstClass[row][column].status = '-';
+			firstClass[row][column].isBooked = false; //This statement was forgotten, so I added it. - Alex
         }
-        else{
+        /*else{
             cout<<"This is an empty seat."<<endl;
-        }
+        }*/ //This else is not doing what it was intended to do. - Alex
     }
     
-    else if(choice == 2){
-        cout<<"You're clearing an Economy seat"<<endl;
-        cout<<"Which Row?: ";
-        cin>>row;
-        cout<<"Which Column?: ";
-        cin>>column;
-        cout<<endl;
-        
-        if((economy[row][column].isBooked == true) || (economy[row][column].status = 'X')){
-            economy[row][column].status = '-';
-        }
-        else{
-            cout<<"This is an empty seat."<<endl;
-        }
-    }
-    else{
-        cout<<"Sorry, your input is invalid. Please choose again."<<endl;
-        clearASeat();
-        }
-        
+	else if (choice == 2) {
+		cout << "You're clearing an Economy seat" << endl;
+		cout << "Which Row?: ";
+		cin >> row;
+		cout << "Which Column?: ";
+		cin >> column;
+		cout << endl;
+
+		if ((column > economyCols) || (row > economyRows)) //This important check was not present, so I added it. - Alex
+		{
+			cout << "Sorry, your input is invalid. Please choose again." << endl;
+			clearASeat();
+		}
+		else if (!economy[row][column].isBooked) //See previous comment. The same applies here. - Alex
+		{
+			cout << "This seat is already empty." << endl;
+		}
+		else if ((economy[row][column].isBooked) || (economy[row][column].status = 'X'))
+		{
+			economy[row][column].status = '-';
+			economy[row][column].isBooked = false; //This statement was forgotten, so I added it. - Alex
+		}
+		/* else{
+			 cout<<"This is an empty seat."<<endl;
+		 }
+	 }
+	 else{
+		 cout<<"Sorry, your input is invalid. Please choose again."<<endl;
+		 clearASeat();
+		 }
+		 */ //It was closer this time, but still not quite right. I fixed it, though. - Alex
+	}
 }
 
 
@@ -372,10 +419,10 @@ Plane::~Plane()
 
 
 
-
+/*
 /*
 	HERE BEGINS THE FUN
-*/
+
 void Plane::printEvenNose(int numOfCols)
 {
 	int numOfRows = 0;
@@ -534,3 +581,4 @@ void Plane::printFuselage(int wingPlacement, int numOfCols)
 		wingCounter++;
 	}
 }
+*/

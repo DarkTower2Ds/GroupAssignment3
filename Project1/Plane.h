@@ -36,11 +36,13 @@ public:
 	void emptyPlane();									//Empty all of the Seats on the plane
 	~Plane();											//Destructor
 
+	/* They didn't work and I don't have time to debug them, but I'm leaving them here - Alex
 	//The following functions are I have added in order to make the printing and display of the seats more interesting and FUN
 	void printEvenNose(int numOfCols);					//Prints the nose section of the aircraft when there's an even number of columns
 	void printOddNose(int numOfCols);					//Prints the nose section of the aircraft when there's an odd number of columns
 	int findWingPlacement();							//Determines where the wings will be printed. Returns an integer value representing the half-way point of the plane
 	void printFuselage(int wingPlacement, int numOfCols);				//Prints the main body of the aircraft, including the wings
+	*/
 };
 
 #endif
